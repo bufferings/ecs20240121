@@ -1,0 +1,40 @@
+{
+  "deploymentConfiguration": {
+    "deploymentCircuitBreaker": {
+      "enable": true,
+      "rollback": true
+    },
+    "maximumPercent": 200,
+    "minimumHealthyPercent": 100
+  },
+  "deploymentController": {
+    "type": "ECS"
+  },
+  "desiredCount": 2,
+  "enableECSManagedTags": true,
+  "enableExecuteCommand": false,
+  "healthCheckGracePeriodSeconds": 10,
+  "launchType": "FARGATE",
+  "loadBalancers": [
+    {
+      "containerName": "nginx-nlb",
+      "containerPort": 80,
+      "targetGroupArn": "{{ tfstate `aws_lb_target_group.main.arn` }}"
+    }
+  ],
+  "networkConfiguration": {
+    "awsvpcConfiguration": {
+      "assignPublicIp": "ENABLED",
+      "securityGroups": [
+        "{{ tfstate `aws_security_group.app.id` }}"
+      ],
+      "subnets": [
+        "{{ tfstate `aws_subnet.main.id` }}"
+      ]
+    }
+  },
+  "platformFamily": "Linux",
+  "platformVersion": "LATEST",
+  "propagateTags": "NONE",
+  "schedulingStrategy": "REPLICA"
+}
